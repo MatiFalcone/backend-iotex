@@ -39,6 +39,7 @@ async function getCandleData(baseToken, quoteCurrency, since, until, window, lim
         tradeAmount(in: USD)
         trades: count
         quotePrice
+        quoteAmount
         maximum_price: quotePrice(calculate: maximum)
         minimum_price: quotePrice(calculate: minimum)
         open_price: minimum(of: block, get: quote_price)
