@@ -10,8 +10,7 @@ const app = express();
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const server = http.createServer(app);
-const verifyToken = require("../middlewares/authentication");
-const bot = require("./query/pricebot");
+//const verifyToken = require("../middlewares/authentication");
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: "*"
@@ -25,11 +24,7 @@ const io = new Server(server);
 // All active connections go in this object
 const clients = {};
 
-/////////////////////////////
-// INICIO MANEJO DE SOCKETS//
-/////////////////////////////
-
-// CONNECTION
+// SOCKETS MANAGEMENT
 io.on("connection", (client) => {
 
   const userID = getUniqueID();
@@ -40,18 +35,12 @@ io.on("connection", (client) => {
   clients[userID] = client;
   console.log("Connected: " + userID + " in " + Object.getOwnPropertyNames(clients))
 
-  // Send initial message to client
-
-
   // DISCONNECTION
   client.on("disconnect", (reason) => {
     const disconnectedUser = userID;
     delete clients[userID];
     console.log("The client disconnected.");
   });
-
-  // Emitir que terminé a todos los clientes
-  //client.broadcast.emit("Esta es la señal SIGUSR2");
 
 });
 
@@ -94,34 +83,9 @@ const getCandleData = require("./query/ohlc");
 const getPairData = require("./query/pair_mint_burn_swap");
 const getPairInfoAt = require("./query/pair_info");
 const getBlockNumber = require("./query/blocks");
-//const makeOrder = require("./query/0x");
-//const getOrderbook = require("./query/0x_orderbook");
-/*
-// Retrieves the information of the token address specified in :token using WMATIC as quote currency
-app.get("/makeOrder", async (req, res) => {
-
-  const newOrder = await makeOrder();
-
-  res.json({
-    ok: true,
-    newOrder
-  });
-
-});
 
 // Retrieves the information of the token address specified in :token using WMATIC as quote currency
-app.get("/getOrderbook", async (req, res) => {
-
-  const orderbook = await getOrderbook();
-
-  res.json({
-    ok: true,
-    orderbook
-  });
-
-});
-*/
-// Retrieves the information of the token address specified in :token using WMATIC as quote currency
+//app.get("/tokenInfo", verifyToken, async (req, res) => {
 app.get("/tokenInfo", async (req, res) => {
 
   let tokenAddress = req.query.token;
@@ -137,6 +101,7 @@ app.get("/tokenInfo", async (req, res) => {
 });
 
 // Retrieves the last 5 QuickSwap trades of the token address specified in :token
+//app.get("/lastTrades", verifyToken, async (req, res) => {
 app.get("/lastTrades", async (req, res) => {
 
   let tokenAddress = req.query.token;
@@ -152,16 +117,16 @@ app.get("/lastTrades", async (req, res) => {
 });
 
 // Retrieves OHLC data 
+//app.get("/ohlc", verifyToken, async (req, res) => {
 app.get("/ohlc", async (req, res) => {
 
   let base = req.query.baseToken;
   let quote = req.query.quoteCurrency;
-  let since = req.query.since;
   let until = req.query.until;
   let window = req.query.window;
   let limit = req.query.limit;
 
-  const dataOHLC = await getCandleData(base, quote, since, until, window, limit);
+  const dataOHLC = await getCandleData(base, quote, until, window, limit);
 
   res.json({
     ok: true,
@@ -171,6 +136,7 @@ app.get("/ohlc", async (req, res) => {
 });
 
 // Retrieves the information of a Pair
+//app.get("/pairData", verifyToken, async (req, res) => {
 app.get("/pairData", async (req, res) => {
 
   let pairAddress = req.query.pair;
@@ -185,6 +151,7 @@ app.get("/pairData", async (req, res) => {
 });
 
 // Retrieves the block number at the last height of the MATIC network 
+//app.get("/pairInfo", verifyToken, async (req, res) => {
 app.get("/pairInfo", async (req, res) => {
 
   let pairAddress = req.query.pair;

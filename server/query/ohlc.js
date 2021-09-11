@@ -12,18 +12,17 @@ if(process.env.NODE_ENV !== "production") {
   redis = new Redis(process.env.REDIS_URL);
 }
 
-async function getCandleData(baseToken, quoteCurrency, since, until, window, limit) {
+async function getCandleData(baseToken, quoteCurrency, until, window, limit) {
 
   const query = `
   {
     ethereum(network: matic) {
       dexTrades(
         options: {asc: "timeInterval.minute", limit: ${limit}}
-        date: {since: "${since}", till: "${until}"}
+        date: {till: "${until}"}
         exchangeName: {in: "QuickSwap"}
         baseCurrency: {is: "${baseToken}"}
         quoteCurrency: {is: "${quoteCurrency}"} # WMATIC
-        tradeAmountUsd: {gt: 10}
       ) {
         timeInterval {
           minute(count: ${window}, format: "%Y-%m-%dT%H:%M:%SZ")
@@ -63,7 +62,7 @@ const opts = {
 };
 
 // Check if I have a cache value for this response
-let cacheEntry = await redis.get(`ohlc:${baseToken}+${quoteCurrency}+${since}+${until}+${window}+${limit}`);
+let cacheEntry = await redis.get(`ohlc:${baseToken}+${quoteCurrency}+${until}+${window}+${limit}`);
 
 // If we have a cache hit
 if (cacheEntry) {
@@ -75,7 +74,7 @@ if (cacheEntry) {
 const response = await fetch(url, opts);
 const data = await response.json();
 // Save entry in cache for 1 minute
-redis.set(`ohlc:${baseToken}+${quoteCurrency}+${since}+${until}+${window}+${limit}`, JSON.stringify(data), "EX", 60);
+redis.set(`ohlc:${baseToken}+${quoteCurrency}+${until}+${window}+${limit}`, JSON.stringify(data), "EX", 60);
 return data;
 
 }
