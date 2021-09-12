@@ -18,7 +18,7 @@ async function getCandleData(baseToken, quoteCurrency, until, window, limit) {
   {
     ethereum(network: matic) {
       dexTrades(
-        options: {asc: "timeInterval.minute", limit: ${limit}}
+        options: {desc: "timeInterval.minute", limit: ${limit}}
         date: {till: "${until}"}
         exchangeName: {in: "QuickSwap"}
         baseCurrency: {is: "${baseToken}"}
