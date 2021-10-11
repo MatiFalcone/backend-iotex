@@ -3,14 +3,14 @@ const fetch = require("node-fetch");
 async function getBlockNumber(timestamp) {
 
     const query = `
-      query blocks {
-        blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: {timestamp_gt: ${timestamp-180000}, timestamp_lt: ${timestamp-120000}}) {
-          number
-        }
+    {
+      blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: {timestamp_gt: ${timestamp-180000}, timestamp_lt: ${timestamp-120000}}) {
+        number
       }
+    }
   `;
   
-  const url = "https://api.thegraph.com/subgraphs/name/sameepsi/maticblocks";
+  const url = "https://api.thegraph.com/subgraphs/name/venomprotocol/bsc-blocks";
   
   const opts = {
       method: "POST",

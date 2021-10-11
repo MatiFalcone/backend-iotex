@@ -99,7 +99,7 @@ async function getPairData(pairAddress) {
   }
 `;
 
-const url = "https://api.thegraph.com/subgraphs/name/sameepsi/quickswap03";
+const url = "https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2";
 
 const opts = {
     method: "POST",

@@ -15,12 +15,12 @@ async function getTokenInfo(tokenAddress, exchangeAddress) {
 
   const query = `
 {
-  ethereum(network: matic) {
+  ethereum(network: bsc) {
     dexTrades(
       options: {desc: ["block.height","tradeIndex"], limit: 1}
       exchangeName: {in: ["${exchangeAddress}"]}
       baseCurrency: {is: "${tokenAddress}"}
-      quoteCurrency: {is: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"} #WMATIC
+      quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"} #WBNB
       date: {since: null, till: null}
     ) {
       transaction {

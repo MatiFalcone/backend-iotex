@@ -16,13 +16,13 @@ async function getCandleData(baseToken, quoteCurrency, until, window, limit) {
 
   const query = `
   {
-    ethereum(network: matic) {
+    ethereum(network: bsc) {
       dexTrades(
         options: {desc: "timeInterval.minute", limit: ${limit}}
         date: {till: "${until}"}
-        exchangeName: {in: "QuickSwap"}
+        exchangeName: {in: "Pancake v2"}
         baseCurrency: {is: "${baseToken}"}
-        quoteCurrency: {is: "${quoteCurrency}"} # WMATIC
+        quoteCurrency: {is: "${quoteCurrency}"} # WBNB
       ) {
         timeInterval {
           minute(count: ${window}, format: "%Y-%m-%dT%H:%M:%SZ")

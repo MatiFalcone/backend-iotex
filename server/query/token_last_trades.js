@@ -16,7 +16,7 @@ async function getLastTrades(tokenAddress, exchangeAddress) {
 
   const query = `
   {
-    ethereum(network: matic) {
+    ethereum(network: bsc) {
       dexTrades(
         options: {limit: 10, desc: "block.height"}
         exchangeName: {in: ["${exchangeAddress}"]}
