@@ -17,31 +17,20 @@ async function getPairInfoAt(blockNumber, pairAddress) {
   const query = `
   fragment PairFields on Pair {
     id
+    name
     token0 {
-      id
-      symbol
       name
-      totalLiquidity
-      derivedBNB
+      symbol
+      decimals
     }
     token1 {
-      id
-      symbol
       name
-      totalLiquidity
-      derivedBNB
+      symbol
+      decimals
     }
-    reserve0
-    reserve1
-    reserveUSD
-    totalSupply
-    trackedReserveBNB
-    reserveBNB
-    volumeUSD
-    untrackedVolumeUSD
-    token0Price
-    token1Price
-    createdAtTimestamp
+    hash
+    block
+    timestamp
   }
   
   query pairs {
@@ -51,7 +40,7 @@ async function getPairInfoAt(blockNumber, pairAddress) {
   }
 `;
 
-const url = "https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2";
+const url = "https://api.thegraph.com/subgraphs/name/pancakeswap/pairs";
 
 const opts = {
     method: "POST",
