@@ -22,21 +22,21 @@ async function getPairInfoAt(blockNumber, pairAddress) {
       symbol
       name
       totalLiquidity
-      derivedETH
+      derivedBNB
     }
     token1 {
       id
       symbol
       name
       totalLiquidity
-      derivedETH
+      derivedBNB
     }
     reserve0
     reserve1
     reserveUSD
     totalSupply
-    trackedReserveETH
-    reserveETH
+    trackedReserveBNB
+    reserveBNB
     volumeUSD
     untrackedVolumeUSD
     token0Price
