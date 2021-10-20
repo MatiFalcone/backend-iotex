@@ -12,25 +12,62 @@ if(process.env.NODE_ENV !== "production") {
   redis = new Redis(process.env.REDIS_URL);
 }
 
-async function getPairInfoAt(blockNumber, pairAddress) {
+async function getPairInfoAt(network, blockNumber, pairAddress) {
+
+  var url = "";
+  var derived = "";
+  var trackedReserve = "";
+  var reserve = "";
+
+  if(network === "bsc") {
+    url = "https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2";
+    derived = "derivedBNB";
+    trackedReserve = "trackedReserveBNB";
+    reserve = "reserveBNB";
+  }
+
+  if(network === "ethereum") {
+    url = "https://api.thegraph.com/subgraphs/name/dimitarnestorov/sushiswap-subgraph";
+    derived = "derivedETH";
+    trackedReserve = "trackedReserveETH";
+    reserve = "reserveETH";
+  }
+
+  if(network === "matic") {
+    url = "https://api.thegraph.com/subgraphs/name/proy24/quickswap-polygon";
+    derived = "derivedETH";
+    trackedReserve = "trackedReserveETH";
+    reserve = "reserveETH";
+  }
 
   const query = `
   fragment PairFields on Pair {
     id
-    name
     token0 {
-      name
+      id
       symbol
-      decimals
+      name
+      totalLiquidity
+      ${derived}
     }
     token1 {
-      name
+      id
       symbol
-      decimals
+      name
+      totalLiquidity
+      ${derived}
     }
-    hash
-    block
-    timestamp
+    reserve0
+    reserve1
+    reserveUSD
+    totalSupply
+    ${trackedReserve}
+    ${reserve}
+    volumeUSD
+    untrackedVolumeUSD
+    token0Price
+    token1Price
+    createdAtTimestamp
   }
   
   query pairs {
@@ -39,8 +76,6 @@ async function getPairInfoAt(blockNumber, pairAddress) {
     }
   }
 `;
-
-const url = "https://api.thegraph.com/subgraphs/name/pancakeswap/pairs";
 
 const opts = {
     method: "POST",
@@ -54,7 +89,7 @@ const opts = {
 };
 
 // Check if I have a cache value for this response
-let cacheEntry = await redis.get(`pairInfoAt:${blockNumber}+${pairAddress}`);
+let cacheEntry = await redis.get(`pairInfoAt:${network}+${blockNumber}+${pairAddress}`);
 
 // If we have a cache hit
 if (cacheEntry) {
@@ -66,7 +101,7 @@ if (cacheEntry) {
 const response = await fetch(url, opts);
 const data = await response.json();
 // Save entry in cache for 1 minute
-redis.set(`pairInfoAt:${blockNumber}+${pairAddress}`, JSON.stringify(data), "EX", 120);
+redis.set(`pairInfoAt:${network}+${blockNumber}+${pairAddress}`, JSON.stringify(data), "EX", 120);
 return data;
 
 }

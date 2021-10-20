@@ -12,11 +12,11 @@ if(process.env.NODE_ENV !== "production") {
   redis = new Redis(process.env.REDIS_URL);
 }
 
-async function getLastTrades(tokenAddress, exchangeAddress) {
+async function getLastTrades(network, tokenAddress, exchangeAddress) {
 
   const query = `
   {
-    ethereum(network: bsc) {
+    ethereum(network: ${network}) {
       dexTrades(
         options: {limit: 10, desc: "block.height"}
         exchangeName: {in: ["${exchangeAddress}"]}
@@ -84,7 +84,7 @@ const opts = {
 };
 
 // Check if I have a cache value for this response
-let cacheEntry = await redis.get(`lastTrades:${tokenAddress}+${exchangeAddress}`);
+let cacheEntry = await redis.get(`lastTrades:${network}+${tokenAddress}+${exchangeAddress}`);
 
 // If we have a cache hit
 if (cacheEntry) {
@@ -96,7 +96,7 @@ if (cacheEntry) {
 const response = await fetch(url, opts);
 const data = await response.json();
 // Save entry in cache for 5 minutes
-redis.set(`lastTrades:${tokenAddress}+${exchangeAddress}`, JSON.stringify(data), "EX", 300);
+redis.set(`lastTrades:${network}+${tokenAddress}+${exchangeAddress}`, JSON.stringify(data), "EX", 300);
 return data;
 
 }

@@ -82,16 +82,17 @@ const getLastTrades = require("./query/token_last_trades");
 const getCandleData = require("./query/ohlc");
 const getPairData = require("./query/pair_mint_burn_swap");
 const getPairInfoAt = require("./query/pair_info");
-const getBlockNumber = require("./query/blocks");
+const { getBlockNumberBsc, getBlockNumberEth, getBlockNumberMatic } = require("./query/blocks");
 
 // Retrieves the information of the token address specified in :token using WMATIC as quote currency
 //app.get("/tokenInfo", verifyToken, async (req, res) => {
 app.get("/tokenInfo", async (req, res) => {
 
+  let network = req.query.network;
   let tokenAddress = req.query.token;
   let exchangeAddress = req.query.exchange;
 
-  const tokenInfo = await getTokenInfo(tokenAddress, exchangeAddress);
+  const tokenInfo = await getTokenInfo(network, tokenAddress, exchangeAddress);
 
   res.json({
     ok: true,
@@ -104,10 +105,11 @@ app.get("/tokenInfo", async (req, res) => {
 //app.get("/lastTrades", verifyToken, async (req, res) => {
 app.get("/lastTrades", async (req, res) => {
 
+  let network = req.query.network;
   let tokenAddress = req.query.token;
   let exchangeAddress = req.query.exchange;
 
-  const tokenLastTrades = await getLastTrades(tokenAddress, exchangeAddress);
+  const tokenLastTrades = await getLastTrades(network, tokenAddress, exchangeAddress);
 
   res.json({
     ok: true,
@@ -120,13 +122,15 @@ app.get("/lastTrades", async (req, res) => {
 //app.get("/ohlc", verifyToken, async (req, res) => {
 app.get("/ohlc", async (req, res) => {
 
+  let network = req.query.network;
+  let exchange = req.query.exchange;
   let base = req.query.baseToken;
   let quote = req.query.quoteCurrency;
   let until = req.query.until;
   let window = req.query.window;
   let limit = req.query.limit;
 
-  const dataOHLC = await getCandleData(base, quote, until, window, limit);
+  const dataOHLC = await getCandleData(network, exchange, base, quote, until, window, limit);
 
   res.json({
     ok: true,
@@ -139,9 +143,13 @@ app.get("/ohlc", async (req, res) => {
 //app.get("/pairData", verifyToken, async (req, res) => {
 app.get("/pairData", async (req, res) => {
 
+  let network = req.query.network;
   let pairAddress = req.query.pair;
 
-  const pairData = await getPairData(pairAddress);
+  // When BSC => PancakeSwap pair address
+  // When ETH => SushiSwap pair address
+  // When MATIC => QuickSwap pair address
+  const pairData = await getPairData(network, pairAddress);
 
   res.json({
     ok: true,
@@ -154,15 +162,28 @@ app.get("/pairData", async (req, res) => {
 //app.get("/pairInfo", verifyToken, async (req, res) => {
 app.get("/pairInfo", async (req, res) => {
 
+  let network = req.query.network;
   let pairAddress = req.query.pair;
 
   let timestamp = Math.floor(Date.now() / 1000);
 
-  const blockData = await getBlockNumber(timestamp);
+  var blockData;
+
+  if(network === "bsc") {
+    blockData = await getBlockNumberBsc(timestamp);
+  }
+
+  if(network === "ethereum") {
+    blockData = await getBlockNumberEth(timestamp);
+  }
+
+  if(network === "matic") {
+    blockData = await getBlockNumberMatic(timestamp);
+  }
 
   let blockNumber = parseInt(blockData.data.blocks[0].number);
 
-  const pairInfo = await getPairInfoAt(blockNumber, pairAddress);
+  const pairInfo = await getPairInfoAt(network, blockNumber, pairAddress);
 
   res.json({
     ok: true,

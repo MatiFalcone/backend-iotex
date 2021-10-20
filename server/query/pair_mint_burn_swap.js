@@ -12,7 +12,21 @@ if(process.env.NODE_ENV !== "production") {
   redis = new Redis(process.env.REDIS_URL);
 }
 
-async function getPairData(pairAddress) {
+async function getPairData(network, pairAddress) {
+
+  var url = "";
+
+  if(network === "bsc") {
+    url = "https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2";
+  }
+
+  if(network === "ethereum") {
+    url = "https://api.thegraph.com/subgraphs/name/dimitarnestorov/sushiswap-subgraph";
+  }
+
+  if(network === "matic") {
+    url = "https://api.thegraph.com/subgraphs/name/proy24/quickswap-polygon";
+  }
 
   const query = `
   {
@@ -99,8 +113,6 @@ async function getPairData(pairAddress) {
   }
 `;
 
-const url = "https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2";
-
 const opts = {
     method: "POST",
     headers: {
@@ -113,7 +125,7 @@ const opts = {
 };
 
 // Check if I have a cache value for this response
-let cacheEntry = await redis.get(`pairData:${pairAddress}`);
+let cacheEntry = await redis.get(`pairData:${network}+${pairAddress}`);
 
 // If we have a cache hit
 if (cacheEntry) {
@@ -125,7 +137,7 @@ if (cacheEntry) {
 const response = await fetch(url, opts);
 const data = await response.json();
 // Save entry in cache for 1 minute
-redis.set(`pairData:${pairAddress}`, JSON.stringify(data), "EX", 60);
+redis.set(`pairData:${network}+${pairAddress}`, JSON.stringify(data), "EX", 60);
 return data;
 
 }
