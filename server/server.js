@@ -85,8 +85,8 @@ const getPairInfoAt = require("./query/pair_info");
 const { getBlockNumberBsc, getBlockNumberEth, getBlockNumberMatic } = require("./query/blocks");
 
 // Retrieves the information of the token address specified in :token using WMATIC as quote currency
-//app.get("/tokenInfo", verifyToken, async (req, res) => {
-app.get("/tokenInfo", async (req, res) => {
+app.get("/tokenInfo", verifyToken, async (req, res) => {
+//app.get("/tokenInfo", async (req, res) => {
 
   let network = req.query.network;
   let tokenAddress = req.query.token;
@@ -102,8 +102,8 @@ app.get("/tokenInfo", async (req, res) => {
 });
 
 // Retrieves the last 5 QuickSwap trades of the token address specified in :token
-//app.get("/lastTrades", verifyToken, async (req, res) => {
-app.get("/lastTrades", async (req, res) => {
+app.get("/lastTrades", verifyToken, async (req, res) => {
+//app.get("/lastTrades", async (req, res) => {
 
   let network = req.query.network;
   let tokenAddress = req.query.token;
@@ -119,8 +119,8 @@ app.get("/lastTrades", async (req, res) => {
 });
 
 // Retrieves OHLC data 
-//app.get("/ohlc", verifyToken, async (req, res) => {
-app.get("/ohlc", async (req, res) => {
+app.get("/ohlc", verifyToken, async (req, res) => {
+//app.get("/ohlc", async (req, res) => {
 
   let network = req.query.network;
   let exchange = req.query.exchange;
@@ -140,8 +140,8 @@ app.get("/ohlc", async (req, res) => {
 });
 
 // Retrieves the information of a Pair
-//app.get("/pairData", verifyToken, async (req, res) => {
-app.get("/pairData", async (req, res) => {
+app.get("/pairData", verifyToken, async (req, res) => {
+//app.get("/pairData", async (req, res) => {
 
   let network = req.query.network;
   let pairAddress = req.query.pair;
@@ -159,8 +159,8 @@ app.get("/pairData", async (req, res) => {
 });
 
 // Retrieves the block number at the last height of the MATIC network 
-//app.get("/pairInfo", verifyToken, async (req, res) => {
-app.get("/pairInfo", async (req, res) => {
+app.get("/pairInfo", verifyToken, async (req, res) => {
+//app.get("/pairInfo", async (req, res) => {
 
   let network = req.query.network;
   let pairAddress = req.query.pair;
