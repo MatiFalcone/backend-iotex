@@ -10,7 +10,7 @@ const app = express();
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const server = http.createServer(app);
-//const verifyToken = require("../middlewares/authentication");
+const verifyToken = require("../middlewares/authentication");
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: "*"
